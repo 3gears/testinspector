@@ -39,7 +39,6 @@ class Viewcumber < Cucumber::Formatter::Json
   def initialize(step_mother, path_or_io, options)
     make_output_dir
     copy_app
-    copy_public_folder
     super(step_mother, File.open(results_filename, 'w+'), options)
     @gf.extend GherkinObjectAttrs
   end
@@ -168,9 +167,4 @@ class Viewcumber < Cucumber::Formatter::Json
     app_dir = File.expand_path(File.join('..', '..', 'build'), __FILE__)
     FileUtils.cp_r "#{app_dir}/.", output_dir
   end
-
-  def copy_public_folder
-    #FileUtils.cp_r File.join(Rails.root, "public"), File.join(results_dir, "public")
-  end
-
 end

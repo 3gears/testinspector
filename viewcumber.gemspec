@@ -1,11 +1,8 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'viewcumber/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "viewcumber"
-  spec.version       = Viewcumber::VERSION
+  spec.version       = "0.4"
   spec.authors       = ["Jonas Schneider", "gregbell", "pcreux", "samuelreh"]
   spec.email         = ["mail@jonasschneider.com"]
   spec.summary       = %q{Cucumber formatter for viewing the current page at each step}
