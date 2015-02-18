@@ -34,6 +34,10 @@ class Viewcumber < Cucumber::Formatter::Json
       # current path will be the results dir, so the new relative path is just new filename
       filename
     end
+
+    # we cheat here a bit since by default, file:// URLs are treated as ASCII (?)
+    # Usually, this is set by the web server...
+    '<meta charset="utf-8">' + response_html
   end
 
   def initialize(step_mother, path_or_io, options)
