@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Viewcumber::VERSION
   spec.authors       = ["Jonas Schneider", "gregbell", "pcreux", "samuelreh"]
   spec.email         = ["mail@jonasschneider.com"]
-  spec.summary       = %q{Cucumber formatter for easily viewing each step of your scenarios}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Cucumber formatter for viewing the current page at each step}
+  #spec.description   = %q{TODO: Write a longer description. Optional.}
   spec.homepage      = ""
   spec.license       = "MIT"
 

@@ -24,11 +24,7 @@ Or install it yourself as:
 
 ## Usage
 
-  viewcumber features
-
-or
-
-  cucumber --format Viewcumber features
+    $ cucumber --format Viewcumber features
 
 Then open ./viewcumber/index.html in Firefox/Safari. It does not work in Chrome.
 
