@@ -5,22 +5,6 @@ require 'digest/sha1'
 require 'cucumber/formatter/json'
 require 'fileutils'
 
-if respond_to? :AfterStep
-  AfterStep do |scenario|
-    begin
-      if !@email.blank?
-        Viewcumber.last_step_html = Viewcumber.rewrite_css_and_image_references(@email)
-        @email = nil
-      elsif Capybara.page.driver.respond_to? :source
-        Viewcumber.last_step_html = Viewcumber.rewrite_css_and_image_references(Capybara.page.driver.source.to_s)
-      elsif Capybara.page.driver.respond_to? :html
-        Viewcumber.last_step_html = Viewcumber.rewrite_css_and_image_references(Capybara.page.driver.html.to_s)
-      end
-    rescue Exception => e
-    end
-  end
-end
-
 class Viewcumber < Cucumber::Formatter::Json
 
   module GherkinObjectAttrs
@@ -35,15 +19,20 @@ class Viewcumber < Cucumber::Formatter::Json
 
   class << self
     attr_accessor :last_step_html
+  end
 
-    def rewrite_css_and_image_references(response_html) # :nodoc:
-      return response_html unless Capybara.asset_root
-      directories = Dir.new(Capybara.asset_root).entries.inject([]) do |list, name|
-        list << name if File.directory?(File.join(Capybara.asset_root, name)) and not name.to_s =~ /^\./
-        list
-      end
-      response_html.gsub!(/("|')\/(#{directories.join('|')})/, '\1public/\2')
-      response_html.gsub(/("|')http:\/\/.*\/images/, '\1public/images') 
+  def rewrite_css_and_image_references(response_html)
+    response_html.gsub! /\/assets\/([a-zA-Z0-9\-_\.\/]+)/ do |old_path|
+      asset_name = $1
+      sprockets_asset = Rails.application.assets.find_asset(asset_name)
+      raise "asset #{asset_name} not found" unless sprockets_asset.present?
+
+      filename = "asset-#{sprockets_asset.digest}.#{asset_name}"
+      full_file_path = File.join(results_dir, filename)
+      sprockets_asset.write_to(full_file_path) unless File.exist?(full_file_path)
+
+      # current path will be the results dir, so the new relative path is just new filename
+      filename
     end
   end
 
@@ -56,8 +45,14 @@ class Viewcumber < Cucumber::Formatter::Json
   end
 
   def after_step(step)
+    if @email.present?
+      Viewcumber.last_step_html = rewrite_css_and_image_references(@email)
+      @email = nil
+    else
+      Viewcumber.last_step_html = rewrite_css_and_image_references(Capybara.page.html.to_s)
+    end
 
-    additional_step_info = { 'html_file' => write_html_to_file(Viewcumber.last_step_html), 
+    additional_step_info = { 'html_file' => write_html_to_file(Viewcumber.last_step_html),
                              'emails' => emails_for_step(step) }
 
     current_element = @gf.feature_hash['elements'].last
@@ -86,7 +81,7 @@ class Viewcumber < Cucumber::Formatter::Json
   # Writes the given html to a file in the results directory
   # and returns the filename.
   #
-  # Filename are based on the SHA1 of the contents. This means 
+  # Filename are based on the SHA1 of the contents. This means
   # that we will only write the same html once
   def write_html_to_file(html)
     return nil unless html && html != ""
@@ -175,7 +170,7 @@ class Viewcumber < Cucumber::Formatter::Json
   end
 
   def copy_public_folder
-    FileUtils.cp_r File.join(Rails.root, "public"), File.join(results_dir, "public")
+    #FileUtils.cp_r File.join(Rails.root, "public"), File.join(results_dir, "public")
   end
 
 end
