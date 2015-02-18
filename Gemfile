@@ -1,5 +1,3 @@
-source :rubygems
+source 'https://rubygems.org'
 
-gem "capybara", ">= 0.3"
-gem "cucumber", ">= 1.1.4"
-gem 'jeweler'
+gemspec

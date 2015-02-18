@@ -1,3 +1,7 @@
+require "bundler/gem_tasks"
+
+# OLD STUFF
+
 require 'rubygems'
 require 'rake'
 
@@ -58,5 +62,5 @@ namespace :js do
     `rm -rf build`
     `flatten src/Build/Deployment/ViewCumber build`
   end
-  
+
 end
