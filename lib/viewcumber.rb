@@ -142,7 +142,7 @@ class Viewcumber < Cucumber::Formatter::Json
   def prepare_email_content(content_type, contents)
     case content_type
     when 'text/html'
-      Viewcumber.rewrite_css_and_image_references(contents)
+      rewrite_css_and_image_references(contents)
     when 'text/plain'
       "<html><body><pre>#{contents}</pre></body></html>"
     else
